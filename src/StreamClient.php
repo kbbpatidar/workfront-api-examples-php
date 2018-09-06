@@ -416,6 +416,22 @@ class StreamClient {
 
 		// Set dynamic cURL options
 		curl_setopt($this->handle, CURLOPT_URL, $this->hostname . $uri);
+		
+		// Supports POST Methods especially while using with Login so that we can pass the credentials to get session data back.
+		if ($method == 'POST' && !empty($fields)) {
+			
+			curl_setopt($this->handle,CURLOPT_POST, count($fields));
+			
+			$fields_string = '';
+			foreach($fields as $key=>$value) { 
+				$fields_string .= $key.'='.$value.'&'; 
+			}
+			rtrim($fields_string, '&');
+
+			curl_setopt($this->handle,CURLOPT_POSTFIELDS, $fields_string);
+		}
+		// POST code change end here
+		
 
 		// Execute request
 		if (!($response = curl_exec($this->handle))) {
